@@ -116,9 +116,12 @@ def get_projects(config):
 
 COMMANDS = 'push pull sync'.split()
 def main():
-    cmd = sys.argv[1]
-    if cmd not in COMMANDS:
-        raise AttributeError("Command not supported")
+    try:
+        cmd = sys.argv[1]
+        if cmd not in COMMANDS:
+            raise AttributeError("Command not supported")
+    except IndexError:
+        cmd = 'sync'
 
     config = load_config()
     projects = get_projects(config)
