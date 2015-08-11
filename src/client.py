@@ -113,8 +113,8 @@ def get_projects(config):
 
 
 COMMANDS = 'push pull sync'.split()
-def main(argv):
-    cmd = argv[1]
+def main():
+    cmd = sys.argv[1]
     if cmd not in COMMANDS:
         raise AttributeError("Command not supported")
 
@@ -129,4 +129,4 @@ def main(argv):
 
 
 if __name__ == '__main__':
-    main(sys.argv)
+    main()
