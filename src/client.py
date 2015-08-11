@@ -57,7 +57,7 @@ def push(project):
     print("Pushing {p.name}".format(p=project))
     remote = repo.remotes.gitlab
     try:
-        for info in remote.push():
+        for info in remote.push("{0}:{0}".format(project.default_branch)):
             print("Pushed %s to %s" % (info.local_ref, info.remote_ref))
             print("Updated %s to %s" % (info.summary, info.flags))
     except GitCommandError:
