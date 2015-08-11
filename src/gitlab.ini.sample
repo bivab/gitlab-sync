@@ -1,0 +1,6 @@
+[gitlab]
+url=http://tuatara.cs.uni-duesseldorf.de
+# GitLab group to manage
+group=articles
+# Private token from: http://tuatara.cs.uni-duesseldorf.de/profile/account
+token=[your token]
