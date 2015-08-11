@@ -5,6 +5,11 @@ from git.exc import GitCommandError
 import os
 import sys
 import ConfigParser
+from log import getLogger
+
+
+logger = getLogger()
+
 
 
 class ProgressIndicator(git.objects.submodule.base.UpdateProgress):
@@ -17,9 +22,9 @@ def sync(projects):
         if p.archived:
             continue
 
-        print("- {}".format(p.name))
+        logger.info("Repository {}".format(p.name))
         if not os.path.isdir(p.path):
-            print(" "*4 + "cloning")
+            logger.info("Cloning")
 
             repo = git.Repo.init(p.path)
             origin = repo.create_remote('gitlab', p.ssh_url_to_repo)
@@ -30,13 +35,16 @@ def sync(projects):
             # Setup a local tracking branch of a remote branch
             ref = origin.refs[p.default_branch]
             repo.create_head(p.default_branch, ref).set_tracking_branch(ref)
+            logger.debug("Creating local branch {} as remote tracking branch".format(p.default_branch))
             # checkout working copy
             repo.branches[p.default_branch].checkout()
+            logger.debug("Checked out branch {}".format(p.default_branch))
         else:
-           repo = git.Repo(p.path)
-           pull(p)
-        print(" "*4 + "updating")
-        push(p)
+            repo = git.Repo(p.path)
+            if not pull(p):
+                continue
+            logger.info("Updating")
+            push(p)
 
 
 def do_pull(repo):
@@ -44,30 +52,30 @@ def do_pull(repo):
     remote = repo.remotes.gitlab
     try:
         for fetch_info in remote.pull():
-            print("Fetched %s to %s" % (fetch_info.ref, fetch_info.commit))
-            print(fetch_info.note)
+            logger.info("Fetched %s to %s" % (fetch_info.ref, fetch_info.commit))
+            logger.info(fetch_info.note)
     except GitCommandError:
-        print("Pull failed, is the repository empty?")
+        logger.warning("Pull failed, is the upstream repository empty?")
         return False
     return True
 
 
 def push(project):
     repo = git.Repo(project.path)
-    print("Pushing {p.name}".format(p=project))
+    logger.info("Pushing {p.name}".format(p=project))
     remote = repo.remotes.gitlab
     try:
         for info in remote.push("{0}:{0}".format(project.default_branch)):
-            print("Pushed %s to %s" % (info.local_ref, info.remote_ref))
-            print("Updated %s to %s" % (info.summary, info.flags))
+            logger.info("Pushed %s to %s" % (info.local_ref, info.remote_ref))
+            logger.info("Updated %s to %s" % (info.summary, info.flags))
     except GitCommandError:
-        print("Push Failed")
+        logger.warning("Push Failed")
 
 
 def pull(project):
     # XXX check for dirty repo
     repo = git.Repo(project.path)
-    print("Pulling {p.name}".format(p=project))
+    logger.info("Pulling {p.name}".format(p=project))
     if not do_pull(repo):
         return
     update_submodules(repo)
@@ -75,6 +83,7 @@ def pull(project):
 
 def update_submodules(repo):
     for sm in repo.submodules:
+        logger.debug("Updateing submodule {}".format(sm.name))
         sm.update()
 
 
@@ -106,23 +115,24 @@ def get_token(config):
 def get_projects(config):
     url = config.get('gitlab', 'url')
     gl = Gitlab(url, get_token(config))
-    print("Connecting to Gitlab {}".format(url))
+    logger.debug("Connecting to Gitlab {}".format(url))
     gl.auth() # XXX catch exceptions
     user = gl.user
-    print("Connected as {1} ({0})".format(user.name, user.username))
+    logger.info("Connected as {1} ({0})".format(user.name, user.username))
     group = gl.Group(config.get('gitlab', 'group')) # XXX catch exceptions
     return group.projects
 
 
 def init():
     if os.path.exists('gitlab.ini'):
-        print("found gitlab.ini, project already initialized.")
+        logger.warning("found gitlab.ini, project already initialized.")
         return
     # XXX sample should go in MANIFEST ?
     sample = os.path.join(os.path.dirname(__file__), '..', 'gitlab.ini.sample')
     with open(sample, 'r') as sample:
         with open('gitlab.ini', 'w') as inifile:
             inifile.write(sample.read())
+    logger.info("Created gitlab.ini configuration file in currenct directory.")
 
 
 COMMANDS = 'init push pull sync'.split()
@@ -146,6 +156,7 @@ def main():
         pull_all(projects)
     elif cmd == 'push':
         push_all(projects)
+    logger.info("Done.")
 
 
 if __name__ == '__main__':
