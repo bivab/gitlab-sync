@@ -100,12 +100,12 @@ def load_config():
     parser.read('gitlab.ini')
     return parser
 
-def get_token():
+def get_token(config):
     return os.getenv('GITLAB_TOKEN', config.get('gitlab', 'token'))
 
 def get_projects(config):
     url = config.get('gitlab', 'url')
-    gl = Gitlab(url, get_token)
+    gl = Gitlab(url, get_token(config))
     print("Connecting to Gitlab {}".format(url))
     gl.auth() # XXX catch exceptions
     user = gl.user
