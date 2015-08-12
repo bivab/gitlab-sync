@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-from gitlab import Gitlab
+from gitlab import Gitlab, GitlabConnectionError
 import git
 from git.exc import GitCommandError
 import os
@@ -149,7 +149,12 @@ def main():
         return
 
     config = load_config()
-    projects = get_projects(config)
+    try:
+        projects = get_projects(config)
+    except GitlabConnectionError as e:
+        logger.error(e.error_message)
+        return
+
     if cmd == 'sync':
         sync(projects)
     elif cmd == 'pull':
