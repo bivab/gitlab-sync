@@ -51,12 +51,18 @@ def do_pull(repo):
     # assure we actually have data. fetch() returns useful information
     remote = repo.remotes.gitlab
     try:
-        for fetch_info in remote.pull():
-            logger.info("Fetched %s to %s" % (fetch_info.ref, fetch_info.commit))
-            logger.info(fetch_info.note)
+        if repo.is_dirty():
+            logger.warning("Repository is dirty -- fetching updates, please merge manually")
+            fetch_info = remote.fetch()
+        else:
+            fetch_info = remote.pull()
     except GitCommandError:
-        logger.warning("Pull failed, is the upstream repository empty?")
+        logger.warning("Fetching failed, is the upstream repository empty?")
         return False
+
+    for fetch_info in fetch_info:
+        logger.info("Fetched %s to %s" % (fetch_info.ref, fetch_info.commit))
+        logger.info(fetch_info.note)
     return True
 
 
@@ -77,8 +83,9 @@ def pull(project):
     repo = git.Repo(project.path)
     logger.info("Pulling {p.name}".format(p=project))
     if not do_pull(repo):
-        return
+        return False
     update_submodules(repo)
+    return True
 
 
 def update_submodules(repo):
