@@ -83,7 +83,7 @@ def pull(project):
 
 def update_submodules(repo):
     for sm in repo.submodules:
-        logger.debug("Updateing submodule {}".format(sm.name))
+        logger.debug("Updating submodule {}".format(sm.name))
         sm.update()
 
 
