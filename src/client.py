@@ -79,7 +79,6 @@ def push(project):
 
 
 def pull(project):
-    # XXX check for dirty repo
     repo = git.Repo(project.path)
     logger.info("Pulling {p.name}".format(p=project))
     if not do_pull(repo):
@@ -111,7 +110,6 @@ def local_repos(projects, f):
 
 
 def load_config():
-    # XXX locate config file in the file system (current folder or above ?)
     parser = ConfigParser.ConfigParser()
     parser.read('gitlab.ini')
     return parser
