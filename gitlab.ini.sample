@@ -4,3 +4,5 @@ url=http://tuatara.cs.uni-duesseldorf.de
 group=articles
 # Private token from: http://tuatara.cs.uni-duesseldorf.de/profile/account
 token=[your token]
+# http or ssh (default)
+protocol=ssh

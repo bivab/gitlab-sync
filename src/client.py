@@ -17,7 +17,7 @@ class ProgressIndicator(git.objects.submodule.base.UpdateProgress):
         print(op_code, cur_count, max_count, cur_count / (max_count or 100.0), message or "NO MESSAGE")
 
 
-def sync(projects):
+def sync(projects, config):
     for p in projects:
         if p.archived:
             continue
@@ -27,7 +27,15 @@ def sync(projects):
             logger.info("Cloning")
 
             repo = git.Repo.init(p.path)
-            origin = repo.create_remote('gitlab', p.ssh_url_to_repo)
+            protocol = config.get('gitlab', 'protocol')
+            if protocol == 'ssh':
+                url = p.ssh_url_to_repo
+            else:
+                logger.info("Using ssh-key authentication is recommended to "
+                            "avoid entering your password "
+                            "for each repository and request")
+                url = p.http_url_to_repo
+            origin = repo.create_remote('gitlab', url)
             assert origin.exists()
             assert origin == repo.remotes.gitlab == repo.remotes['gitlab']
             if not do_pull(repo):
@@ -57,7 +65,9 @@ def do_pull(repo):
         else:
             fetch_info = remote.pull()
     except GitCommandError:
-        logger.warning("Fetching failed, is the upstream repository empty?")
+        logger.warning("""Fetching failed, possible reasons:\n"""
+                        """* The umpstream repository is empty.\n"""
+                        """* The provided credentials are wrong.""")
         return False
 
     for fetch_info in fetch_info:
@@ -161,7 +171,7 @@ def main():
         return
 
     if cmd == 'sync':
-        sync(projects)
+        sync(projects, config)
     elif cmd == 'pull':
         pull_all(projects)
     elif cmd == 'push':
