@@ -1,6 +1,6 @@
 from os import path
 from setuptools import setup, find_packages
-from src import __about__
+from gitlab_sync import __about__
 
 base = path.dirname(__file__)
 
@@ -17,15 +17,14 @@ setup(name=__about__.__title__,
     url='http://tuatara.cs.uni-duesseldorf.de/bivab/gitlab-sync.git',
     description='Utility to synchronize a GitLab group of repositories at once.',
     long_description=readme,
-    package_dir={'': 'src'},
-    packages=find_packages('src'),
+    packages=find_packages(),
     zip_safe=False,
     install_requires=requirements,
     license='MIT',
     include_package_data=False,
     entry_points={
         'console_scripts': [
-            'gitlab-sync = client:main',
+            'gitlab-sync = gitlab_sync.client:main',
         ],
     },
     classifiers=[

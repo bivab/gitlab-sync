@@ -5,7 +5,7 @@ from git.exc import GitCommandError
 import os
 import sys
 import ConfigParser
-from log import getLogger
+from .log import getLogger
 
 
 logger = getLogger()
