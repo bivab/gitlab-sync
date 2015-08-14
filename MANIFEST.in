@@ -1,0 +1,3 @@
+include gitlab.ini.sample
+include LICENSE
+include README.md
