@@ -1,3 +1,5 @@
 include gitlab_sync/gitlab.ini.sample
 include LICENSE
-include README.md
+include *.md
+include *.txt
+recursive-include requirements *.txt
