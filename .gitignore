@@ -2,3 +2,4 @@ gitlab.ini
 tmp/*
 dist/
 gitlab_sync.egg-info
+build/
