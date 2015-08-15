@@ -21,7 +21,7 @@ setup(name=__about__.__title__,
     zip_safe=False,
     install_requires=requirements,
     license='MIT',
-    include_package_data=False,
+    include_package_data=True,
     entry_points={
         'console_scripts': [
             'gitlab-sync = gitlab_sync.client:main',

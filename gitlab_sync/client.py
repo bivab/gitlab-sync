@@ -143,7 +143,7 @@ def init():
         logger.warning("found gitlab.ini, project already initialized.")
         return
     # XXX sample should go in MANIFEST ?
-    sample = os.path.join(os.path.dirname(__file__), '..', 'gitlab.ini.sample')
+    sample = os.path.join(os.path.dirname(__file__), 'gitlab.ini.sample')
     with open(sample, 'r') as sample:
         with open('gitlab.ini', 'w') as inifile:
             inifile.write(sample.read())

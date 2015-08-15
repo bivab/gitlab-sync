@@ -1,3 +1,3 @@
-include gitlab.ini.sample
+include gitlab_sync/gitlab.ini.sample
 include LICENSE
 include README.md
