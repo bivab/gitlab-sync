@@ -120,6 +120,8 @@ def local_repos(projects, f):
 
 
 def load_config():
+    if not os.path.exists('gitlab.ini'):
+        raise ValueError("gitlab.ini not found")
     parser = ConfigParser.ConfigParser()
     parser.read('gitlab.ini')
     return parser
@@ -148,6 +150,7 @@ def init():
         with open('gitlab.ini', 'w') as inifile:
             inifile.write(sample.read())
     logger.info("Created gitlab.ini configuration file in currenct directory.")
+    logger.info("Add your GitLab token to gitlab.ini before running gitlab-sync.")
 
 
 COMMANDS = 'init push pull sync'.split()
@@ -155,7 +158,9 @@ def main():
     try:
         cmd = sys.argv[1]
         if cmd not in COMMANDS:
-            raise AttributeError("Command not supported")
+            logger.error("Command not supported, valid commands are init, "
+                            "sync, pull and push")
+            return
     except IndexError:
         cmd = 'sync'
 
@@ -163,7 +168,11 @@ def main():
         init()
         return
 
-    config = load_config()
+    try:
+        config = load_config()
+    except ValueError:
+        logger.error("gitlab.ini configuration file not found.")
+        return init()
     try:
         projects = get_projects(config)
     except GitlabConnectionError as e:
