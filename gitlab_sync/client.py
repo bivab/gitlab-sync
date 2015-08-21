@@ -10,7 +10,7 @@ from .log import getLogger
 
 logger = getLogger()
 
-
+DEFAULT_REMOTE = 'gitlab'
 
 class ProgressIndicator(git.objects.submodule.base.UpdateProgress):
     def update(self, op_code, cur_count, max_count=None, message=''):
@@ -23,21 +23,22 @@ def sync(projects, config):
             continue
 
         logger.info("Repository {}".format(p.name))
+
+        protocol = config.get('gitlab', 'protocol')
+        if protocol == 'ssh':
+            url = p.ssh_url_to_repo
+        else:
+            logger.info("Using ssh-key authentication is recommended to "
+                        "avoid entering your password "
+                        "for each repository and request")
+            url = p.http_url_to_repo
+
         if not os.path.isdir(p.path):
             logger.info("Cloning")
 
             repo = git.Repo.init(p.path)
-            protocol = config.get('gitlab', 'protocol')
-            if protocol == 'ssh':
-                url = p.ssh_url_to_repo
-            else:
-                logger.info("Using ssh-key authentication is recommended to "
-                            "avoid entering your password "
-                            "for each repository and request")
-                url = p.http_url_to_repo
-            origin = repo.create_remote('gitlab', url)
-            assert origin.exists()
-            assert origin == repo.remotes.gitlab == repo.remotes['gitlab']
+            create_remote(repo, url)
+
             if not do_pull(repo):
                 continue
             # Setup a local tracking branch of a remote branch
@@ -49,11 +50,23 @@ def sync(projects, config):
             logger.debug("Checked out branch {}".format(p.default_branch))
         else:
             repo = git.Repo(p.path)
+            # check if 'gitlab' remote exists
+            try:
+                repo.remote(DEFAULT_REMOTE)
+            except ValueError:
+                logger.warning('Repository does not have a {} remote, adding it.'.format(DEFAULT_REMOTE))
+                create_remote(repo, url)
+
             if not pull(p):
                 continue
             logger.info("Updating")
             push(p)
 
+
+def create_remote(repo, url):
+    origin = repo.create_remote(DEFAULT_REMOTE, url)
+    assert origin.exists()
+    assert origin == repo.remote(DEFAULT_REMOTE) == repo.remotes[DEFAULT_REMOTE]
 
 def do_pull(repo):
     # assure we actually have data. fetch() returns useful information
