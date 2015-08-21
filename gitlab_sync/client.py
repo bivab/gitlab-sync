@@ -12,7 +12,7 @@ logger = getLogger()
 
 DEFAULT_REMOTE = 'gitlab'
 
-__VERSION__ = '0.0.1'
+__VERSION__ = '0.1.0-dev'
 
 class ProgressIndicator(git.objects.submodule.base.UpdateProgress):
     def update(self, op_code, cur_count, max_count=None, message=''):

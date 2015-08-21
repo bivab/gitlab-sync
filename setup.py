@@ -10,7 +10,7 @@ with open(path.join(base, 'README.md')) as rm:
     readme = rm.read()
 
 setup(name="gitlab-sync",
-    version='0.0.1',
+    version='0.1.0-dev',
     author='David Schneider',
     author_email='david.schneider@bivab.de',
     url='http://tuatara.cs.uni-duesseldorf.de/bivab/gitlab-sync.git',
