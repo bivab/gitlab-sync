@@ -9,8 +9,8 @@ with open(path.join(base, 'requirements.txt')) as req:
 with open(path.join(base, 'README.md')) as rm:
     readme = rm.read()
 
-    version='0.0.1-dev',
 setup(name="gitlab-sync",
+    version='0.0.1',
     author='David Schneider',
     author_email='david.schneider@bivab.de',
     url='http://tuatara.cs.uni-duesseldorf.de/bivab/gitlab-sync.git',
