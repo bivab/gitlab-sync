@@ -12,6 +12,8 @@ logger = getLogger()
 
 DEFAULT_REMOTE = 'gitlab'
 
+__VERSION__ = '0.0.1'
+
 class ProgressIndicator(git.objects.submodule.base.UpdateProgress):
     def update(self, op_code, cur_count, max_count=None, message=''):
         print(op_code, cur_count, max_count, cur_count / (max_count or 100.0), message or "NO MESSAGE")
@@ -171,6 +173,7 @@ def init():
 
 COMMANDS = 'init push pull sync'.split()
 def main():
+    logger.info("gitlab-sync version:" + __VERSION__)
     try:
         cmd = sys.argv[1]
         if cmd not in COMMANDS:
