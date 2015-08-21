@@ -62,6 +62,9 @@ def do_pull(repo):
         if repo.is_dirty():
             logger.warning("Repository is dirty -- fetching updates, please merge manually")
             fetch_info = remote.fetch()
+        elif len(repo.refs) == 0: # emtpy repo
+            logger.info("Empty repository, add some commits.")
+            return False
         else:
             fetch_info = remote.pull()
     except GitCommandError:
