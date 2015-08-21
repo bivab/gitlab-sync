@@ -3,3 +3,4 @@ fancycompleter
 pdbpp
 see
 check-manifest
+bumpversion
