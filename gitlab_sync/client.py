@@ -24,7 +24,8 @@ def sync(projects, config):
         if p.archived:
             continue
 
-        logger.info("Repository {}".format(p.name))
+        name = p.name.encode('utf8')
+        logger.info("Repository {}".format(name))
 
         protocol = config.get('gitlab', 'protocol')
         if protocol == 'ssh':
@@ -98,7 +99,8 @@ def do_pull(repo):
 
 def push(project):
     repo = git.Repo(project.path)
-    logger.info("Pushing {p.name}".format(p=project))
+    name = project.name.encode('utf8')
+    logger.info("Pushing {name}".format(name=name))
     remote = repo.remotes.gitlab
     try:
         for info in remote.push("{0}:{0}".format(project.default_branch)):
@@ -110,7 +112,8 @@ def push(project):
 
 def pull(project):
     repo = git.Repo(project.path)
-    logger.info("Pulling {p.name}".format(p=project))
+    name = project.name.encode('utf8')
+    logger.info("Pulling {name}".format(name=name))
     if not do_pull(repo):
         return False
     update_submodules(repo)
@@ -155,7 +158,10 @@ def get_projects(config):
     logger.debug("Connecting to Gitlab {}".format(url))
     gl.auth() # XXX catch exceptions
     user = gl.user
-    logger.info("Connected as {1} ({0})".format(user.name, user.username))
+    name = user.name.encode('utf8')
+    username = user.username.encode('utf8')
+    logger.info("Connected as {1} ({0})".format(
+        user.name.encode('utf8'), user.username))
     group = gl.Group(config.get('gitlab', 'group')) # XXX catch exceptions
     return group.projects
 
