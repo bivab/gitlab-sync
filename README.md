@@ -6,7 +6,7 @@ Utility to synchronize a GitLab group of repositories at once.
 
 To get the latest stable version use (with the git tag of the version you wish to install):
 
-`[sudo] pip install git+http://tuatara.cs.uni-duesseldorf.de/bivab/gitlab-sync.git@v0.1.0`
+`[sudo] pip install git+http://tuatara.cs.uni-duesseldorf.de/bivab/gitlab-sync.git@v0.1.1`
 
 # Usage
 
