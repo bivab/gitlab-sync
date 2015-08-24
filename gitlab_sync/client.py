@@ -39,7 +39,7 @@ def sync(projects, config):
             logger.info("Cloning")
 
             repo = git.Repo.init(p.path)
-            create_remote(repo, url)
+            origin = create_remote(repo, url)
 
             if not do_pull(repo):
                 continue
@@ -69,6 +69,8 @@ def create_remote(repo, url):
     origin = repo.create_remote(DEFAULT_REMOTE, url)
     assert origin.exists()
     assert origin == repo.remote(DEFAULT_REMOTE) == repo.remotes[DEFAULT_REMOTE]
+    return origin
+
 
 def do_pull(repo):
     # assure we actually have data. fetch() returns useful information
