@@ -87,7 +87,7 @@ def do_pull(repo):
             fetch_info = remote.pull()
     except GitCommandError:
         logger.warning("""Fetching failed, possible reasons:\n"""
-                        """* The umpstream repository is empty.\n"""
+                        """* The upstream repository is empty.\n"""
                         """* The provided credentials are wrong.""")
         return False
 
