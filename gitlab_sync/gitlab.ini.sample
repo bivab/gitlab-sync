@@ -1,8 +1,8 @@
 [gitlab]
-url=http://tuatara.cs.uni-duesseldorf.de
+url=[gitlab URL]
 # GitLab group to manage
-group=articles
-# Private token from: http://tuatara.cs.uni-duesseldorf.de/profile/account
+group=[gitlab group to sync]
+# Private token from: [gitlab URL]/profile/account
 token=[your token]
 # http or ssh (default)
 protocol=ssh
